@@ -5,6 +5,7 @@ package de.LarsRoemheld.freemindandroid;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -92,6 +93,25 @@ public class MindmapNode {
 		this.parent.children.remove(this);
 		this.delete_internal();
 	}
+
+	
+	private void searchInChildren_internal(String searchText, ArrayList<MindmapNode> results) {
+		if (Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(this.text).find());
+			results.add(this);
+
+		for (MindmapNode c : this.children) {
+			c.searchInChildren_internal(searchText, results);
+		}
+	}
+
+	public ArrayList<MindmapNode> searchInChildren(String searchText) {
+		ArrayList<MindmapNode> results = new ArrayList<MindmapNode>();
+		
+		this.searchInChildren_internal(searchText, results);
+		
+		return results;
+	}
+	
 	
 	/*
 	 * Reads the current node from the current position of the parser, recursively adding children as 

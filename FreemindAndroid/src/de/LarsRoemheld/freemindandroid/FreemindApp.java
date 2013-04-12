@@ -1,9 +1,6 @@
 package de.LarsRoemheld.freemindandroid;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,24 +10,17 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
-import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NavUtils;
-import android.text.Editable;
 import android.util.Log;
 import android.util.Xml;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,21 +28,23 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.Space;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
+import android.widget.Toast;
 
-public class FreemindApp extends FragmentActivity implements OnClickListener, OnLongClickListener  {
+public class FreemindApp extends Activity implements OnClickListener, OnLongClickListener  {
 	private String filePath;
 	private MindmapNode myMindmap = new MindmapNode(null);
 	private volatile boolean changesMade = false;
+	
+	private String searchedFor = "";
+	private int searchPos = 0;
+	private ArrayList<MindmapNode> searchResults = new ArrayList<MindmapNode>();
 	
 	//  public volatile MindmapNode dialogNode;
 	private void repopulateBubbles(MindmapNode node) {
@@ -65,47 +57,48 @@ public class FreemindApp extends FragmentActivity implements OnClickListener, On
 		titleButton.setTag(R.id.LarsRoemheld_key_node_THIS, node);
 		titleButton.setOnLongClickListener(this);
 
-		
 		lLayout.removeAllViews();
 		titleCrumbs_lLayout.removeViews(0, titleCrumbs_lLayout.getChildCount() - 1);
 
+		
+		titleButton.setText(node.getText());
+
+		// Create Breadcrumbs
+		MindmapNode x = node;
+		while (x.getParent() != null) {
+			x = x.getParent();
+			
+			Button crumbButton = new Button(titleCrumbs_lLayout.getContext());
+			
+			crumbButton.setLayoutParams(
+					new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 
+							titleButton.getHeight()));
+			crumbButton.setText(x.getText());
+			crumbButton.setTag(R.id.LarsRoemheld_key_node_NAV, x);
+			crumbButton.setTag(R.id.LarsRoemheld_key_node_THIS, x);
+
+			crumbButton.setOnClickListener(this);
+			crumbButton.setOnLongClickListener(this);
+			
+			crumbButton.setAlpha(0.5f);
+			
+			titleCrumbs_lLayout.addView(crumbButton, 0);
+		}
+		x = null;
+		
+		final HorizontalScrollView scroll = (HorizontalScrollView) findViewById(R.id.scrollViewTitle);
+		scroll.post(new Runnable() {            
+		    public void run() {
+		       scroll.fullScroll(HorizontalScrollView.FOCUS_RIGHT);              
+		    }
+		});
+		
+		
 		if (node.hasChildren()) {
-			titleButton.setText(node.getText());
-
-			// Create Breadcrumbs
+			// list children
+			// TODO this should be done using ListView and possibly ArrayAdapter for hygienic reasons
+			// and to enable smoother layout (arrows for nodes with children)
 			
-			MindmapNode x = node;
-			while (x.getParent() != null) {
-				x = x.getParent();
-				
-				Button crumbButton = new Button(titleCrumbs_lLayout.getContext());
-				
-				crumbButton.setLayoutParams(
-						new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 
-								titleButton.getHeight()));
-				crumbButton.setText(x.getText());
-				crumbButton.setTag(R.id.LarsRoemheld_key_node_NAV, x);
-				crumbButton.setTag(R.id.LarsRoemheld_key_node_THIS, x);
-
-				crumbButton.setOnClickListener(this);
-				crumbButton.setOnLongClickListener(this);
-				
-				crumbButton.setAlpha(0.5f);
-				
-				titleCrumbs_lLayout.addView(crumbButton, 0);
-			}
-			x = null;
-			
-			final HorizontalScrollView scroll = (HorizontalScrollView) findViewById(R.id.scrollViewTitle);
-			scroll.post(new Runnable() {            
-			    public void run() {
-			       scroll.fullScroll(HorizontalScrollView.FOCUS_RIGHT);              
-			    }
-			});
-			
-			
-
-			// and list children
 			for (MindmapNode b : node.getChildren()) {
 				Button btn = new Button(lLayout.getContext());
 
@@ -124,8 +117,6 @@ public class FreemindApp extends FragmentActivity implements OnClickListener, On
 				lLayout.addView(btn);
 			}
 		} else {
-			titleButton.setText(getString(R.string.bubble_back));
-			
 			WebView web = new WebView(lLayout.getContext());
 			
 			web.setLayoutParams(
@@ -154,6 +145,35 @@ public class FreemindApp extends FragmentActivity implements OnClickListener, On
 				}
 		}
 	}
+	
+	public void action_searchNext(View view) {
+    	EditText input = (EditText) findViewById(R.id.editText_searchText);
+    	
+    	if (searchedFor.equals(input.getText().toString()) && !searchResults.isEmpty()) {
+    		searchPos++;
+    		if (searchPos >= searchResults.size())  { 
+        		searchPos = 0;
+        		
+        		Toast t = Toast.makeText(getApplicationContext(), R.string.searchStartingOver, Toast.LENGTH_SHORT);
+        		t.setGravity(Gravity.TOP|Gravity.CENTER, 0, 0);
+        		t.show();
+        	}
+    		
+        	repopulateBubbles(searchResults.get(searchPos));
+    	} else {
+    		searchResults = myMindmap.searchInChildren(input.getText().toString());
+    		searchPos = 0;
+    		
+        	if (searchResults.isEmpty()) {
+        		Toast t = Toast.makeText(getApplicationContext(), R.string.searchUnsuccessful, Toast.LENGTH_SHORT);
+        		t.setGravity(Gravity.TOP|Gravity.CENTER, 0, 0);
+        		t.show();
+        	} else
+        		repopulateBubbles(searchResults.get(0));
+    	}
+    	
+    	searchedFor = input.getText().toString();
+	}
 
 	public boolean onLongClick(View view) {
 		if (view.getClass() == Button.class) {
@@ -173,6 +193,8 @@ public class FreemindApp extends FragmentActivity implements OnClickListener, On
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        
+        // TODO problem: on rotate the map is reset to root. . .
         setContentView(R.layout.activity_bubbles);
 
     	myMindmap = new MindmapNode(null);
@@ -269,7 +291,6 @@ public class FreemindApp extends FragmentActivity implements OnClickListener, On
         return true;
     }
     
-
     @Override
     protected void onStop() {
     	super.onStop();
@@ -351,6 +372,30 @@ public class FreemindApp extends FragmentActivity implements OnClickListener, On
     	return "";
     }
     
+
+    public boolean menu_searchNodes(MenuItem it) {
+    	ViewGroup a = (ViewGroup) findViewById(R.id.container_search);
+
+		EditText input = (EditText) findViewById(R.id.editText_searchText);
+
+    	if (a.getVisibility() == ViewGroup.VISIBLE) {
+    		a.setVisibility(ViewGroup.GONE);
+
+    		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    		if (imm != null) imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+    	}
+    	else {
+    		a.setVisibility(ViewGroup.VISIBLE);
+
+        	input.requestFocus();
+
+        	InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        	if (imm != null) imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+    	}
+    	
+    	return true;
+    }
+
     public boolean menu_addNode(MenuItem it) {
     	Button titleButton = (Button) findViewById(R.id.titleButton);
     	MindmapNode t = (MindmapNode) titleButton.getTag(R.id.LarsRoemheld_key_node_THIS);

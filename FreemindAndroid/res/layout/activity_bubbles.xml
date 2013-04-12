@@ -10,7 +10,47 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
         
-            <HorizontalScrollView
+        <LinearLayout
+	        android:layout_width="match_parent"
+    	    android:layout_height="wrap_content"
+        	android:orientation="vertical"
+        	android:visibility="gone"
+            android:id="@+id/container_search">
+        
+		<LinearLayout
+	        android:layout_width="match_parent"
+    	    android:layout_height="wrap_content"
+        	android:orientation="horizontal" >
+		
+			<EditText
+			    android:layout_width="0dp"
+			    android:layout_height="wrap_content"
+		        android:layout_weight="1" 
+		        android:id="@+id/editText_searchText" />
+			
+			<Button 
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content" 
+			    android:text=">"
+			    android:onClick="action_searchNext" />
+		</LinearLayout>
+
+		<Space
+            android:layout_width="fill_parent"
+            android:layout_height="5dp"
+            />
+        <View 
+            android:layout_width="fill_parent"
+			android:layout_height="3dp"
+			android:background="#FF999999" />
+        <Space
+            android:layout_width="fill_parent"
+            android:layout_height="10dp"
+            />
+		
+        </LinearLayout>				   
+				    
+        <HorizontalScrollView
             android:id="@+id/scrollViewTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

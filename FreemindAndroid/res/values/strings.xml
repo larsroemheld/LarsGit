@@ -3,9 +3,10 @@
     <string name="app_name">FreemindAndroid</string>
     <string name="title_activity_freemind_app">FreemindApp</string>
     <string name="action_addNode">Add Node</string>
-    <string name="action_save">Save</string>
-    <string name="bubble_back">back / edit</string>
+    <string name="action_searchNodes">Search</string>
     <string name="fileCreatedBy">This file was created by Lars Roemheld\'s FreemindApp</string>
+    <string name="searchUnsuccessful">No nodes found</string>
+    <string name="searchStartingOver">Reached last result, starting over</string>
     <string name="editNodeDialog">Edit Node</string>
     <string name="editNodeDialog_new">Create</string>
     <string name="editNodeDialog_edit">Edit</string>

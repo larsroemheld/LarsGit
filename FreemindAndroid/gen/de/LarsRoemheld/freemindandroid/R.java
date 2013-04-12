@@ -19,13 +19,16 @@ public final class R {
     public static final class id {
         public static final int LarsRoemheld_key_node_NAV=0x7f040000;
         public static final int LarsRoemheld_key_node_THIS=0x7f040001;
-        public static final int bubbles_Layout=0x7f040007;
+        public static final int bubbles_Layout=0x7f040009;
         public static final int container=0x7f040002;
-        public static final int menu_addNode=0x7f040008;
-        public static final int scrollView1=0x7f040006;
-        public static final int scrollViewTitle=0x7f040003;
-        public static final int titleButton=0x7f040005;
-        public static final int title_crumbs=0x7f040004;
+        public static final int container_search=0x7f040003;
+        public static final int editText_searchText=0x7f040004;
+        public static final int menu_addNode=0x7f04000a;
+        public static final int menu_searchNodes=0x7f04000b;
+        public static final int scrollView1=0x7f040008;
+        public static final int scrollViewTitle=0x7f040005;
+        public static final int titleButton=0x7f040007;
+        public static final int title_crumbs=0x7f040006;
     }
     public static final class layout {
         public static final int activity_bubbles=0x7f030000;
@@ -35,17 +38,18 @@ public final class R {
     }
     public static final class string {
         public static final int action_addNode=0x7f050002;
-        public static final int action_save=0x7f050003;
+        public static final int action_searchNodes=0x7f050003;
         public static final int app_name=0x7f050000;
-        public static final int bubble_back=0x7f050004;
-        public static final int editNodeDialog=0x7f050006;
-        public static final int editNodeDialog_cancel=0x7f050009;
-        public static final int editNodeDialog_edit=0x7f050008;
-        public static final int editNodeDialog_new=0x7f050007;
-        public static final int fileCreatedBy=0x7f050005;
-        public static final int readFileIncompleteDialog=0x7f05000a;
-        public static final int readFileIncompleteDialogMsg=0x7f05000b;
-        public static final int readFileIncompleteDialogOk=0x7f05000c;
+        public static final int editNodeDialog=0x7f050007;
+        public static final int editNodeDialog_cancel=0x7f05000a;
+        public static final int editNodeDialog_edit=0x7f050009;
+        public static final int editNodeDialog_new=0x7f050008;
+        public static final int fileCreatedBy=0x7f050004;
+        public static final int readFileIncompleteDialog=0x7f05000b;
+        public static final int readFileIncompleteDialogMsg=0x7f05000c;
+        public static final int readFileIncompleteDialogOk=0x7f05000d;
+        public static final int searchStartingOver=0x7f050006;
+        public static final int searchUnsuccessful=0x7f050005;
         public static final int title_activity_freemind_app=0x7f050001;
     }
     public static final class style {
