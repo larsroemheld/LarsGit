@@ -46,7 +46,6 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
 	private int searchPos = 0;
 	private ArrayList<MindmapNode> searchResults = new ArrayList<MindmapNode>();
 	
-	//  public volatile MindmapNode dialogNode;
 	private void repopulateBubbles(MindmapNode node) {
 		
     	Button titleButton = (Button) findViewById(R.id.titleButton);
@@ -59,10 +58,11 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
 
 		lLayout.removeAllViews();
 		titleCrumbs_lLayout.removeViews(0, titleCrumbs_lLayout.getChildCount() - 1);
-
 		
+
 		titleButton.setText(node.getText());
 
+		
 		// Create Breadcrumbs
 		MindmapNode x = node;
 		while (x.getParent() != null) {
@@ -72,7 +72,7 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
 			
 			crumbButton.setLayoutParams(
 					new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 
-							titleButton.getHeight()));
+							LinearLayout.LayoutParams.MATCH_PARENT));
 			crumbButton.setText(x.getText());
 			crumbButton.setTag(R.id.LarsRoemheld_key_node_NAV, x);
 			crumbButton.setTag(R.id.LarsRoemheld_key_node_THIS, x);
@@ -126,7 +126,7 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
 
 			lLayout.addView(web);
 		}
-
+		
 		// Avoid resizing problems
 		titleButton.forceLayout();
 	}
@@ -194,7 +194,7 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
         super.onCreate(savedInstanceState);
         
         
-        // TODO problem: on rotate the map is reset to root. . .
+        // TODO create temporary files and enable creating new files?
         setContentView(R.layout.activity_bubbles);
 
     	myMindmap = new MindmapNode(null);
@@ -255,25 +255,64 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
             
             MindmapNode x = myMindmap;
             for (int i = 1; i < 20; i++) {
-            	if (Math.random() < 0.5f) {
-            		x = x.addChild("father" + i);
-            	} else { x.addChild("son" + i); }
+            	x.addChild("son" + i);
+            	x = x.addChild("father" + i);
             }
             
         }
-
-        repopulateBubbles(myMindmap);
+        
+        MindmapNode dNode = myMindmap;
+        MindmapNode cNode;
         changesMade = false;
+        
+        if (savedInstanceState != null) {
+        	try {
+        	ArrayList<Integer> relPos = savedInstanceState.getIntegerArrayList("relPos");
+        	
+        	if (relPos != null) {
+        		for (Integer ii : relPos) {
+        			cNode = dNode.getChildren().get(ii);
+        			dNode = cNode;
+        		}
+        	}
+        	} catch (Exception e) {
+        		Log.w("LR", "Exception when trying to restore InstanceState in onCreate!");
+        		dNode = myMindmap;
+        	}
+        	
+        	changesMade = savedInstanceState.getBoolean("changesMade", false);
+        }
+        
+        repopulateBubbles(dNode);
     }
+    
+    
+    // onRestoreInstanceState is handled by onCreate!
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        ArrayList<Integer> relPos = new ArrayList<Integer>();
+
+    	Button titleButton = (Button) findViewById(R.id.titleButton);
+    	MindmapNode dNode = (MindmapNode) titleButton.getTag(R.id.LarsRoemheld_key_node_THIS);
+    	
+    	while (dNode.getParent() != null) {
+    		relPos.add(0, dNode.getParent().getChildren().indexOf(dNode));
+    		dNode = dNode.getParent();
+    	}
+        
+        savedInstanceState.putIntegerArrayList("relPos", relPos);
+        savedInstanceState.putBoolean("changesMade", changesMade);
+    }
+    
     
     @Override
     public void onBackPressed() {
     	try {
     		Button titleButton = (Button) findViewById(R.id.titleButton);
-	    	Object t = titleButton.getTag(R.id.LarsRoemheld_key_node_THIS);
+    		MindmapNode m = (MindmapNode) titleButton.getTag(R.id.LarsRoemheld_key_node_THIS);
 	    	
-	    	MindmapNode m = (MindmapNode) t;
-	    		
 	    	if (m.getParent() != null) {
 	    		repopulateBubbles(m.getParent());
 	    	} else {
