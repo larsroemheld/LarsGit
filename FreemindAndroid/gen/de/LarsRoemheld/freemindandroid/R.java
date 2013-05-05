@@ -19,16 +19,17 @@ public final class R {
     public static final class id {
         public static final int LarsRoemheld_key_node_NAV=0x7f040000;
         public static final int LarsRoemheld_key_node_THIS=0x7f040001;
-        public static final int bubbles_Layout=0x7f040009;
+        public static final int bubbles_Layout=0x7f04000a;
         public static final int container=0x7f040002;
         public static final int container_search=0x7f040003;
         public static final int editText_searchText=0x7f040004;
-        public static final int menu_addNode=0x7f04000a;
-        public static final int menu_searchNodes=0x7f04000b;
-        public static final int scrollView1=0x7f040008;
-        public static final int scrollViewTitle=0x7f040005;
-        public static final int titleButton=0x7f040007;
-        public static final int title_crumbs=0x7f040006;
+        public static final int menu_addNode=0x7f04000b;
+        public static final int menu_searchNodes=0x7f04000c;
+        public static final int scrollView1=0x7f040009;
+        public static final int scrollViewTitle=0x7f040006;
+        public static final int search_Button=0x7f040005;
+        public static final int titleButton=0x7f040008;
+        public static final int title_crumbs=0x7f040007;
     }
     public static final class layout {
         public static final int activity_bubbles=0x7f030000;

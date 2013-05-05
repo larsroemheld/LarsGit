@@ -28,13 +28,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class FreemindApp extends Activity implements OnClickListener, OnLongClickListener  {
@@ -155,7 +158,7 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
         		searchPos = 0;
         		
         		Toast t = Toast.makeText(getApplicationContext(), R.string.searchStartingOver, Toast.LENGTH_SHORT);
-        		t.setGravity(Gravity.TOP|Gravity.CENTER, 0, 0);
+        		t.setGravity(Gravity.TOP|Gravity.CENTER, 0, (int) Math.ceil(50 * getApplicationContext().getResources().getDisplayMetrics().density));
         		t.show();
         	}
     		
@@ -166,7 +169,7 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
     		
         	if (searchResults.isEmpty()) {
         		Toast t = Toast.makeText(getApplicationContext(), R.string.searchUnsuccessful, Toast.LENGTH_SHORT);
-        		t.setGravity(Gravity.TOP|Gravity.CENTER, 0, 0);
+        		t.setGravity(Gravity.TOP|Gravity.CENTER, 0, (int) Math.ceil(50 * getApplicationContext().getResources().getDisplayMetrics().density));
         		t.show();
         	} else
         		repopulateBubbles(searchResults.get(0));
@@ -194,7 +197,9 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
         super.onCreate(savedInstanceState);
         
         
-        // TODO create temporary files and enable creating new files?
+        // TODO create temporary files and enable creating new files? Currently all changes are lost onRotate!!!
+        // -- cf. Writer app: maintain own folder of mm files (copies saved there) -> "share" from app.
+        
         setContentView(R.layout.activity_bubbles);
 
     	myMindmap = new MindmapNode(null);
@@ -284,6 +289,17 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
         }
         
         repopulateBubbles(dNode);
+        
+        EditText eT = (EditText) findViewById(R.id.editText_searchText);
+        eT.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    action_searchNext(findViewById(R.id.search_Button));
+                    return true;
+                }
+                return false;
+            }
+        });
     }
     
     

@@ -96,8 +96,9 @@ public class MindmapNode {
 
 	
 	private void searchInChildren_internal(String searchText, ArrayList<MindmapNode> results) {
-		if (Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(this.text).find());
+		if (Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(this.text).find()) {
 			results.add(this);
+		}
 
 		for (MindmapNode c : this.children) {
 			c.searchInChildren_internal(searchText, results);
