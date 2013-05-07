@@ -71,7 +71,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:onClick="onClick" />
-			</LinearLayout> 
+                 			</LinearLayout> 
         </HorizontalScrollView>
         
         <Space
@@ -86,24 +86,13 @@
             android:layout_width="fill_parent"
             android:layout_height="10dp"
             />
-        
-        <ScrollView
-            android:id="@+id/scrollView1"
+
+        <ListView 
+            android:id="@+id/bubblesList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" 
-            android:fadeScrollbars = "false" 
-            android:fillViewport = "true" >
-
-            <LinearLayout
-                android:id="@+id/bubbles_Layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-                
-            </LinearLayout>
-        </ScrollView>
-
+        	/>
+        
     </LinearLayout>
 
 </FrameLayout>

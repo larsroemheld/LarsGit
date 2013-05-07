@@ -137,7 +137,7 @@ public class MindmapNode {
 	            break;
 	        }
 	    }
-	 }
+	}
 	public boolean readFromXml(XmlPullParser parser) throws IOException, XmlPullParserException {
 		boolean result = true;
 		
