@@ -27,7 +27,17 @@ public class MindmapNode {
 			this.value = value;
 		}
 	}
-	
+
+	private class xmlTag {
+		String name;
+		protected ArrayList<xmlAttribute> attributes;
+		
+		public xmlTag(String name) {
+			this.name = name;
+			this.attributes = new ArrayList<xmlAttribute>();
+		}
+	}
+
 	private String text;
 	private ArrayList<xmlAttribute> unusedAttributes;
 	private ArrayList<MindmapNode> children;

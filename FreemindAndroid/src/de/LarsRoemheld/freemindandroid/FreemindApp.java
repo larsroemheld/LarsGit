@@ -53,6 +53,7 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
 	private volatile boolean changesMade = false;
 	
 	private Button titleButton;
+	private WebView openWebView;
 	
 	private String searchedFor = "";
 	private int searchPos = 0;
@@ -103,6 +104,7 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
                 
                 if (!fullyRead) {
                 	filePath = filePath + "_copy.mm";
+                    // TODO nicht erkannte Tags nicht wegwerfen, sondern speichern (s. MindmapNode struktur)
                 	
                 	new AlertDialog.Builder(this) //
                 	.setTitle(R.string.readFileIncompleteDialog) //
@@ -113,10 +115,11 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
                 xmlParser.setInput(null);
                 xmlParser = null;
                 file.close();
-            } catch (IOException e) {
-            	Log.w("LR1", e.toString());    
-            } catch (XmlPullParserException x) {
-            	Log.w("LR1", x.toString());    
+            } catch (Exception e) {
+            	new AlertDialog.Builder(this) //
+            	.setTitle(R.string.readFileErrorDialog) //
+            	.setMessage(getString(R.string.readFileErrorDialogMsg)) //
+            	.show();
             };
         } 
         
@@ -126,11 +129,12 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
             myMindmap.addChild("Open any *.mm file through this app (using e.g. the downloads app)");
             myMindmap.addChild("Short press to navigate.");
             myMindmap.addChild("Long press to edit nodes.");
-            myMindmap.addChild("Any empty node will automatically be deleted.");
+            myMindmap.addChild("Deleting all content of a node deletes the node itself.");
             myMindmap.addChild("---");
             myMindmap.addChild("Add new nodes using \"+\" button.");
             myMindmap.addChild("---");
             myMindmap.addChild("<h1> html works </h1> <p> or at least for nodes <i> without children </i> </p>");
+            myMindmap.addChild("---");
             
             MindmapNode x = myMindmap;
             for (int i = 1; i < 20; i++) {
@@ -238,6 +242,8 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
 	private void repopulateBubbles(MindmapNode node) {
 		
 		LinearLayout titleCrumbs_lLayout = (LinearLayout) findViewById(R.id.title_crumbs);
+		LinearLayout lLayout = (LinearLayout) findViewById(R.id.lLayoutContainer);
+		ListView list = (ListView) findViewById(R.id.bubblesList);
     	
 		titleButton.setTag(R.id.LarsRoemheld_key_node_NAV, node.getParent());
 		titleButton.setTag(R.id.LarsRoemheld_key_node_THIS, node);
@@ -245,15 +251,13 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
 		titleCrumbs_lLayout.removeViews(0, titleCrumbs_lLayout.getChildCount() - 1);
 		
 		titleButton.setText(node.getText());
-
+		
 		// Create Breadcrumbs
 		MindmapNode x = node;
 		while (x.getParent() != null) {
 			x = x.getParent();
 			
 			Button crumbButton = new Button(titleCrumbs_lLayout.getContext());
-			
-			
 			
 			crumbButton.setLayoutParams(
 					new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 
@@ -279,15 +283,32 @@ public class FreemindApp extends Activity implements OnClickListener, OnLongClic
 		});
 		
 		
-		// TODO wahrscheinlich muss einfach ein custom adapter geschrieben werden für ein bubbles_listitem, das auch einen pfeil
-		// (icon) beinhaltet, wenn children da sind -- dort dann auch ggf. verlinkung von tags?
-		// Dann implementierung von click/longclick!
-    	bubblesListAdapter = new MindmapNode_Adapter(this, R.layout.bubbles_listitem, 
-    			R.id.bubbles_listitem_text, R.id.bubbles_listitem_iconright, node.getChildren());
-    	
-        ListView list = (ListView) findViewById(R.id.bubblesList);
-        list.setAdapter(bubblesListAdapter);
-        
+		if (node.hasChildren()) {
+			if (openWebView != null) {
+				lLayout.removeView(openWebView);
+				openWebView.destroy();
+				openWebView = null;
+				list.setVisibility(ViewGroup.VISIBLE);
+			}
+			
+			bubblesListAdapter = new MindmapNode_Adapter(this, R.layout.bubbles_listitem, 
+					R.id.bubbles_listitem_text, R.id.bubbles_listitem_iconright, node.getChildren());
+
+			list.setAdapter(bubblesListAdapter);
+		} else { // TODO elegant ist das hier eigentlich nicht -- löschen oder so?
+			if (openWebView == null) {
+				openWebView = new WebView(lLayout.getContext());
+				list.setVisibility(ViewGroup.GONE);
+			}
+			
+			openWebView.setLayoutParams(
+					new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 
+							LinearLayout.LayoutParams.MATCH_PARENT, 1f));
+			openWebView.loadData(node.getText(), "text/html", null);
+			
+			lLayout.addView(openWebView);
+		}
+
 		// Avoid resizing problems
 		titleButton.forceLayout();
 	}

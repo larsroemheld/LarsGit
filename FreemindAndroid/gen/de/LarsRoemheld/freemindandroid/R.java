@@ -20,20 +20,21 @@ public final class R {
     public static final class id {
         public static final int LarsRoemheld_key_node_NAV=0x7f040000;
         public static final int LarsRoemheld_key_node_THIS=0x7f040001;
-        public static final int bubblesList=0x7f040009;
-        public static final int bubbles_listitem_container=0x7f04000a;
-        public static final int bubbles_listitem_count=0x7f04000c;
-        public static final int bubbles_listitem_iconright=0x7f04000d;
-        public static final int bubbles_listitem_text=0x7f04000b;
+        public static final int bubblesList=0x7f04000a;
+        public static final int bubbles_listitem_container=0x7f04000b;
+        public static final int bubbles_listitem_count=0x7f04000d;
+        public static final int bubbles_listitem_iconright=0x7f04000e;
+        public static final int bubbles_listitem_text=0x7f04000c;
         public static final int container=0x7f040002;
-        public static final int container_search=0x7f040003;
-        public static final int editText_searchText=0x7f040004;
-        public static final int menu_addNode=0x7f04000e;
-        public static final int menu_searchNodes=0x7f04000f;
-        public static final int scrollViewTitle=0x7f040006;
-        public static final int search_Button=0x7f040005;
-        public static final int titleButton=0x7f040008;
-        public static final int title_crumbs=0x7f040007;
+        public static final int container_search=0x7f040004;
+        public static final int editText_searchText=0x7f040005;
+        public static final int lLayoutContainer=0x7f040003;
+        public static final int menu_addNode=0x7f04000f;
+        public static final int menu_searchNodes=0x7f040010;
+        public static final int scrollViewTitle=0x7f040007;
+        public static final int search_Button=0x7f040006;
+        public static final int titleButton=0x7f040009;
+        public static final int title_crumbs=0x7f040008;
     }
     public static final class layout {
         public static final int activity_bubbles=0x7f030000;
@@ -51,9 +52,10 @@ public final class R {
         public static final int editNodeDialog_edit=0x7f050009;
         public static final int editNodeDialog_new=0x7f050008;
         public static final int fileCreatedBy=0x7f050004;
+        public static final int readFileErrorDialog=0x7f05000d;
+        public static final int readFileErrorDialogMsg=0x7f05000e;
         public static final int readFileIncompleteDialog=0x7f05000b;
         public static final int readFileIncompleteDialogMsg=0x7f05000c;
-        public static final int readFileIncompleteDialogOk=0x7f05000d;
         public static final int searchStartingOver=0x7f050006;
         public static final int searchUnsuccessful=0x7f050005;
         public static final int title_activity_freemind_app=0x7f050001;

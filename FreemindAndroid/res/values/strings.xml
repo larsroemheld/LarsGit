@@ -13,6 +13,7 @@
     <string name="editNodeDialog_cancel">Abort</string>
     <string name="readFileIncompleteDialog">Warning</string>
     <string name="readFileIncompleteDialogMsg">I did not understand some parts of the opened file. I will not overwrite the original file, and create a new file: </string>
-    <string name="readFileIncompleteDialogOk">Abort</string>
+    <string name="readFileErrorDialog">Error</string>
+    <string name="readFileErrorDialogMsg">Could not read the file. Maybe not a well formed freemind *.mm file?</string>
     
 </resources>
